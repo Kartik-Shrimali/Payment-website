@@ -28,14 +28,13 @@ const UserSchema = new Schema({
 })
 
 const AccountSchema = new Schema({
-    balance : {
-        type : Number,
-        required : true
-    },
-
     Userid : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
+        required : true
+    },
+    balance : {
+        type : Number,
         required : true
     }
 })
