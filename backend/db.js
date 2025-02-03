@@ -11,10 +11,12 @@ const UserSchema = new Schema({
     firstname: {
         type: String,
         required: true,
+        trim : true
     },
     lastname: {
         type: String,
         required: true,
+        trim : true
     },
     password: {
         type: String,
@@ -25,8 +27,22 @@ const UserSchema = new Schema({
 
 })
 
-const User = mongoose.model('User', UserSchema);
+const AccountSchema = new Schema({
+    balance : {
+        type : Number,
+        required : true
+    },
 
+    Userid : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "User",
+        required : true
+    }
+})
+
+const User = mongoose.model('User', UserSchema);
+const Account = mongoose.model('Account' , AccountSchema);
 module.exports = {
-    User
+    User,
+    Account
 }
