@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose') ;
 const { Schema } = mongoose;
 mongoose.connect("mongodb+srv://kartikshrimali62:KARTIK19111@cluster0.d3rhb.mongodb.net/User");
 

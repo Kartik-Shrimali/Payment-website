@@ -1,11 +1,11 @@
 const express = require('express');
 const jwt = require("jsonwebtoken");
 const zod = require("zod");
-const router = express.Router();
-const User = require("../db");
-const Account = require("../db")
-const JWT_SECRET = require("./config");
-const authMiddleware = require('../middleware')
+const UserRouter = express.Router();
+const {User,Account} = require("../db");
+const {JWT_SECRET} = require("./config");
+const {authMiddleware} = require('../middleware')
+
 
 const signupSchema = zod.object({
     username: zod.string().email(),
@@ -15,13 +15,14 @@ const signupSchema = zod.object({
 
 })
 
-router.post('/signup', async (req, res) => {
+UserRouter.post('/signup', async (req, res) => {
+    console.log(req.body);
     const body = req.body;
-    const { success } = signupSchema.safeParse(body);
+    const  success  = signupSchema.safeParse(body);
 
     if (!success) {
         return res.json({
-            msg: "Username already taken/Incorrect inputs"
+            msg: "Some error"
         })
     }
 
@@ -29,7 +30,7 @@ router.post('/signup', async (req, res) => {
         username: body.username
     })
 
-    if (user._id) {
+    if (user) {
         return res.json({
             msg: "Username already taken/ Incorrect Inputs"
         })
@@ -42,11 +43,11 @@ router.post('/signup', async (req, res) => {
         password: body.password
     });
     
-    const userId = user._id;
+    const userId = dbuser._id;
     
     const AccountUser = await Account.create({
-        balance : 1 + Math.random() * 10000,
-        userid : userId
+        Userid : userId,
+        balance : 1 + Math.random() * 10000
     })
 
     let token = jwt.sign({
@@ -65,9 +66,9 @@ const signinSchema = zod.object({
     password: zod.string().min(6, { message: "The password should be of atleast 6 words!!" }),
 })
 
-router.post('/signin', async (req, res) => {
+UserRouter.post('/signin', async (req, res) => {
     const body = req.body;
-    const {success} = signinSchema.safeParse(body);
+    const success = signinSchema.safeParse(body);
 
     if(!success){
         return res.json({
@@ -82,7 +83,7 @@ router.post('/signin', async (req, res) => {
 
     if(user){
         const token = jwt.sign({
-            userID : user._id
+            userId : user._id
         } , JWT_SECRET);
         
         return res.json({
@@ -105,7 +106,7 @@ const updateSchema = zod.object({
 })
 
 
-router.put('/changeInfo', authMiddleware , async (req, res) => {
+UserRouter.put('/changeInfo', authMiddleware , async (req, res) => {
     const body = req.body;
     const {success} = updateSchema.safeParse(body);
 
@@ -126,8 +127,9 @@ router.put('/changeInfo', authMiddleware , async (req, res) => {
 
 })
 
-router.get('/info' , authMiddleware , async(req , res)=>{
-    const filter = req.body.filter || "";
+UserRouter.get('/info' , authMiddleware , async(req , res)=>{
+    const filter = req.query.filter || "";
+    console.log(filter);
 
     const users = await User.find({
         $or : [{
@@ -155,6 +157,4 @@ router.get('/info' , authMiddleware , async(req , res)=>{
     } 
 })
 
-module.exports = {
-    router
-}
+module.exports = {UserRouter};
