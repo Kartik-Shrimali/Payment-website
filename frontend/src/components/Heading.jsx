@@ -1,6 +1,6 @@
 export function Heading({ label }) {
     return (
-        <div className="bg-gray-50 text-black text-3xl font-bold">
+        <div className="flex justify-center text-black text-3xl font-bold">
             {label}
         </div>
     )
