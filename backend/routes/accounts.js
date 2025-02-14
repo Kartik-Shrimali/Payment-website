@@ -5,7 +5,7 @@ const {authMiddleware} = require("../middleware");
 const {Account} = require("../db")
 
 AccountRouter.get('/balance', authMiddleware, async (req, res) => {
-    let id = req.body.Userid;
+    let id = req.userId;
 
     const AccountUser = await Account.findOne({
         Userid: id
@@ -31,7 +31,7 @@ AccountRouter.post('/transfer', authMiddleware, async (req, res) => {
 
     const ReceiverId = req.body.id;
     const amount = req.body.amount;
-    const Userid = req.body.Userid;
+    const Userid = req.userId;
 
     const account = await Account.findOne({Userid : Userid }).session(session);
 
